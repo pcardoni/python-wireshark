@@ -1,10 +1,5 @@
 import pyshark
 
-cap = pyshark.FileCapture('gprs1201rjo.pcap', display_filter='data.data and tcp.flags.push == 1 and not pptp and not tcp.reassembled.data')
-
-
-#pkt = cap[24]
-
 def wireshark_data_iso8583(pkt):
 
     data = pkt.data.data
@@ -32,21 +27,33 @@ def wireshark_data_iso8583(pkt):
     resultado["BIT47"] = bit47_true
     return resultado
 
-bit_sim = 0
-bit_nao = 0
-for pkt in cap:
+inicio = 9
+fim = 21
+resultado = {}
+while inicio < fim:
+    arquivo = "" % inicio
+    cap = pyshark.FileCapture(arquivo, display_filter='data.data and tcp.flags.push == 1 and not pptp and not tcp.reassembled.data')
 
-    r = wireshark_data_iso8583(pkt)
-    if r["BIT47"]:
-        bit_sim += 1
-    else:
-        bit_nao += 1
-print("Quantos BIT47: %d" % bit_sim)
-print("Sem BIT47: %d" % bit_nao)
+    for r in cap:
+        l = wireshark_data_iso8583(r)
+        if l["BIT47"]:
+            variavel = l["1 Valor BIT47"]
+            if variavel in resultado:
+                temp = resultado[variavel] + 1
+                resultado[variavel] = temp
+            else:
+                resultado[variavel] = 1
+    inicio += 1
 
-
-#r = wireshark_data_iso8583(cap[0])
-#print(r)
+soma = 0
+for r in resultado.keys():
+    soma += resultado[r]
+print("Resultado")
+print()
+for p in resultado.keys():
+    print("%s: %d - %5.2f" % (p, resultado[p], (100 * resultado[p]) / soma) + "%")
+print()
+print("Total de mensagem com Bit47: %d" % soma)
 
 
 
