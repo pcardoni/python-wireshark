@@ -34,7 +34,7 @@ def wireshark_data_iso8583(pkt):
         return resultado
 
 arquivos = [
-    ""
+    "C:/Users/cardoni/Desktop/claro/19012018/gprsclarorj/ClaroRJ.pcap"
 ]
 
 resultado = {}
