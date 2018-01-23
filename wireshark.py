@@ -27,11 +27,12 @@ def wireshark_data_iso8583(pkt):
     resultado["BIT47"] = bit47_true
     return resultado
 
-inicio = 9
-fim = 21
+arquivos = [
+
+]
+
 resultado = {}
-while inicio < fim:
-    arquivo = "" % inicio
+for arquivo in arquivos:
     cap = pyshark.FileCapture(arquivo, display_filter='data.data and tcp.flags.push == 1 and not pptp and not tcp.reassembled.data')
 
     for r in cap:
@@ -43,7 +44,6 @@ while inicio < fim:
                 resultado[variavel] = temp
             else:
                 resultado[variavel] = 1
-    inicio += 1
 
 soma = 0
 for r in resultado.keys():
@@ -54,6 +54,3 @@ for p in resultado.keys():
     print("%s: %d - %5.2f" % (p, resultado[p], (100 * resultado[p]) / soma) + "%")
 print()
 print("Total de mensagem com Bit47: %d" % soma)
-
-
-
